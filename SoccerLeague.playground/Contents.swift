@@ -112,53 +112,49 @@ func seperatePlayers() {
     }
 }
 
-func divideNonExperienced() {
-    var NonExperiencedClone = nonexperiencedPlayers
-    while NonExperiencedClone.count > 0 {
-        for player in NonExperiencedClone {
-            
-            if teamSharks.count < (players.count / allTeams.count) {
-                teamSharks[player.key] = player.value
-                if AvgHeight(team: players) - allowedRange / Double(allTeams.count) > AvgHeight(team: teamSharks)
-                    || AvgHeight(team: teamSharks) > AvgHeight(team: players) + allowedRange / Double(allTeams.count) {
-                    teamSharks.removeValue(forKey: player.key)
-                } else {
-                    NonExperiencedClone.removeValue(forKey: player.key)
-                }
-                
-            } else if teamRaptors.count < (players.count / allTeams.count) {
-                teamRaptors[player.key] = player.value
-                if AvgHeight(team: players) - allowedRange / Double(allTeams.count) > AvgHeight(team: teamRaptors)
-                    || AvgHeight(team: teamRaptors) > AvgHeight(team: players) + allowedRange / Double(allTeams.count) {
-                    teamRaptors.removeValue(forKey: player.key)
-                } else {
-                    NonExperiencedClone.removeValue(forKey: player.key)
-                }
-            } else if teamDragons.count < (players.count / allTeams.count) {
-                teamDragons[player.key] = player.value
-                if AvgHeight(team: players) - allowedRange / Double(allTeams.count) > AvgHeight(team: teamDragons)
-                    || AvgHeight(team: teamDragons) > AvgHeight(team: players) + allowedRange / Double(allTeams.count) {
-                    teamDragons.removeValue(forKey: player.key)
-                } else {
-                    NonExperiencedClone.removeValue(forKey: player.key)
-                }
-            }
-        }
-    }
+// - Function to determine number of players per team
+func numberOfPlayersPerTeam(numberOfPlayers: Int, numberOfTeams: Int) -> Int {
+    let playersPerTeam = numberOfPlayers / numberOfTeams
+    return playersPerTeam
 }
+
+// - Constant Numbers to determine number of players per team as retured by function above.
+let totalPlayersPerTeam = numberOfPlayersPerTeam(numberOfPlayers: players.count, numberOfTeams: allTeams.count)
+
+//print(numberOfExperiencedPlayersPerTeam)
+let numberOfInexperiencedPlayersPerTeam = numberOfPlayersPerTeam(numberOfPlayers: nonexperiencedPlayers.count, numberOfTeams: allTeams.count)
+
 
 func divideExperienced() {
+    let numberOfExperiencedPlayersPerTeam = numberOfPlayersPerTeam(numberOfPlayers: experiencedPlayers.count, numberOfTeams: allTeams.count)
     for player in experiencedPlayers {
-        if teamSharks.count < (experiencedPlayers.count / allTeams.count) {
+        if teamSharks.count < (numberOfExperiencedPlayersPerTeam) {
             teamSharks[player.key] = player.value
-        } else if teamRaptors.count < (experiencedPlayers.count / allTeams.count) {
+        } else if teamRaptors.count < (numberOfExperiencedPlayersPerTeam) {
             teamRaptors[player.key] = player.value
-        } else if teamDragons.count < (experiencedPlayers.count / allTeams.count) {
+        } else if teamDragons.count < (numberOfExperiencedPlayersPerTeam) {
             teamDragons[player.key] = player.value
+        } else {
+            print("All teams filled with experienced players")
         }
     }
 }
 
+// - Loop to divide up nonexperienced players evenly
+func divideNonExperienced() {
+    //let numberOfInexperiencedPlayersPerTeam = numberOfPlayersPerTeam(numberOfPlayers: nonexperiencedPlayers.count, numberOfTeams: allTeams.count)
+    for player in nonexperiencedPlayers {
+        if teamSharks.count < totalPlayersPerTeam {
+            teamSharks[player.key] = player.value
+        } else if teamRaptors.count < totalPlayersPerTeam {
+            teamRaptors[player.key] = player.value
+        } else if teamDragons.count < totalPlayersPerTeam {
+            teamDragons[player.key] = player.value
+        } else {
+            print("All teams filled with nonexperienced players")
+        }
+    }
+}
 /*
 Part 3: ** Write code that iterates through all three teams of players and generates a personalized letter to the guardians,
 letting them know which team the child has been placed on and when they should attend their first team team practice.
